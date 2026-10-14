@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Clicker — Cave Mining Clicker</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div id="logo">⛏️ Open Clicker</div>
+    <div id="topStats">
+      <div class="tstat"><label>Cash</label><span id="statCash">$0</span></div>
+      <div class="tstat"><label>Per second</label><span id="statCps">$0/s</span></div>
+      <div class="tstat"><label>Deep crystals</label><span id="statCrystals">🔷 0</span></div>
+      <div class="tstat"><label>Achievement bonus</label><span id="statAch">+0%</span></div>
+    </div>
+    <div id="buffBar"></div>
+  </header>
+
+  <main id="columns">
+    <!-- LEFT: rock, news, prestige -->
+    <section id="leftCol">
+      <div id="rockArea">
+        <div id="oreHint">Click the rock to mine ore!</div>
+        <button id="rock" aria-label="Mine rock">
+          <span class="speck s1">🟡</span>
+          <span class="speck s2">⚪</span>
+          <span class="speck s3">🟠</span>
+          <span class="speck s4">💎</span>
+          <span id="rockPick">⛏️</span>
+        </button>
+        <div id="clickInfo"><span id="clickPowerTxt">1 ore/click</span></div>
+      </div>
+
+      <div id="newsTicker"><div id="newsText"></div></div>
+
+      <div id="prestigePanel">
+        <h3>Descend Deeper</h3>
+        <div id="prestigeInfo">Reach $100,000 run earnings to earn your first Deep Crystal.</div>
+        <button id="prestigeBtn" class="btn danger" disabled>Descend deeper</button>
+        <div class="hint">Each Deep Crystal gives +1% to production and clicking, forever.</div>
+      </div>
+    </section>
+
+    <!-- CENTER: buildings -->
+    <section id="centerCol">
+      <div id="shopHead">
+        <h2>Miners</h2>
+        <div id="buyAmounts">
+          <button class="amt active" data-amt="1">1</button>
+          <button class="amt" data-amt="10">10</button>
+          <button class="amt" data-amt="100">100</button>
+          <button class="amt" data-amt="max">Max</button>
+        </div>
+      </div>
+      <div id="buildingList"></div>
+    </section>
+
+    <!-- RIGHT: tabbed panels -->
+    <section id="rightCol">
+      <nav id="tabs">
+        <button class="tab active" data-tab="upgrades">Upgrades <span id="upgBadge" class="badge hidden">0</span></button>
+        <button class="tab" data-tab="trade">Trade <span id="offerBadge" class="badge hidden">0</span></button>
+        <button class="tab" data-tab="achievements">Achievements <span id="achBadge" class="badge hidden">0</span></button>
+        <button class="tab" data-tab="garden">Garden</button>
+        <button class="tab" data-tab="scanner">Scanner</button>
+        <button class="tab" data-tab="stats">Stats</button>
+      </nav>
+
+      <div class="pane" id="pane-upgrades">
+        <div class="section">
+          <h3>Upgrades <span class="hint">— permanent for this run; reset when you descend deeper.</span></h3>
+          <div id="upgList"></div>
+        </div>
+      </div>
+
+      <div class="pane hidden" id="pane-trade">
+        <div class="section">
+          <h3>Inventory <span class="hint" id="quickSellHint">— quick sell takes a 5% market cut</span></h3>
+          <div id="invList"></div>
+        </div>
+        <div class="section">
+          <h3>Your listings <span class="hint" id="listingCount"></span></h3>
+          <div id="listingForm">
+            <select id="listOre"></select>
+            <input id="listQty" type="number" min="1" step="1" value="100">
+            <button id="listQtyMax" class="btn small">Max</button>
+            <button id="postListing" class="btn">Post listing</button>
+          </div>
+          <div id="listingsList"></div>
+        </div>
+        <div class="section">
+          <h3>Distributor offers</h3>
+          <div id="offersList"><div class="empty">Post a listing and distributors will send offers here.</div></div>
+        </div>
+      </div>
+
+      <div class="pane hidden" id="pane-achievements">
+        <div class="section">
+          <h3>Achievements <span class="hint" id="achProgress"></span></h3>
+          <div id="achGrid"></div>
+        </div>
+      </div>
+
+      <div class="pane hidden" id="pane-garden">
+        <div id="gardenLocked" class="lockedMsg">🔒 Buy a <b>Crystal Geode</b> to unlock the Crystal Garden.</div>
+        <div id="gardenMain" class="hidden">
+          <div class="section">
+            <h3>Seeds <span class="hint">— plant, grow, harvest for ore &amp; buffs</span></h3>
+            <div id="seedPicker"></div>
+          </div>
+          <div class="section">
+            <h3>Geode bed</h3>
+            <div id="gardenGrid"></div>
+            <div id="gardenInfo" class="hint">Select a seed, then click an empty plot to plant. Click a glowing crystal to harvest.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane hidden" id="pane-scanner">
+        <div id="scannerLocked" class="lockedMsg">🔒 Buy a <b>Deep Bore</b> to unlock the Seam Scanner.</div>
+        <div id="scannerMain" class="hidden">
+          <div class="section">
+            <div id="scanHeader"></div>
+            <div id="scanGrid"></div>
+            <div class="hint" id="scanHelp">
+              <b>Left-click</b> a hidden cell to scan it for free — the number shows how many veins touch that cell (minesweeper-style).
+              <b>Right-click</b> to dig: extract ore + cash, but it costs money whether you strike a vein or hit a cave-in.
+              Clear every vein to finish the sector.
+            </div>
+            <button id="nextSectorBtn" class="btn hidden">Map next sector</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane hidden" id="pane-stats">
+        <div class="section">
+          <h3>Statistics</h3>
+          <div id="statsList"></div>
+        </div>
+        <div class="section">
+          <h3>Settings</h3>
+          <div class="settingsRow">
+            <label>Notation
+              <select id="setNotation">
+                <option value="short">1.23K / 4.5M</option>
+                <option value="sci">Scientific</option>
+              </select>
+            </label>
+            <label class="checkLabel"><input type="checkbox" id="setSound" checked> Click sound</label>
+          </div>
+        </div>
+        <div class="section">
+          <h3>Save</h3>
+          <div class="btnRow">
+            <button id="btnSave" class="btn">Save now</button>
+            <button id="btnExport" class="btn">Export save</button>
+            <button id="btnImport" class="btn">Import save</button>
+            <button id="btnWipe" class="btn danger">Hard reset</button>
+          </div>
+          <textarea id="saveText" rows="4" placeholder="Save code appears here — paste a code here and press Import to load it."></textarea>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="floatLayer"></div>
+<div id="toasts"></div>
+<div id="modalOverlay" class="hidden">
+  <div id="modalBox"></div>
+</div>
+
+<script src="js/format.js"></script>
+<script src="js/data/ores.js"></script>
+<script src="js/data/buildings.js"></script>
+<script src="js/data/upgrades.js"></script>
+<script src="js/data/achievements.js"></script>
+<script src="js/data/distributors.js"></script>
+<script src="js/data/events.js"></script>
+<script src="js/state.js"></script>
+<script src="js/market.js"></script>
+<script src="js/clicker.js"></script>
+<script src="js/prestige.js"></script>
+<script src="js/save.js"></script>
+<script src="js/minigames/garden.js"></script>
+<script src="js/minigames/scanner.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/loop.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
