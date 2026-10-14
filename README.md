@@ -9,8 +9,6 @@ random Motherlode events, achievements, offline progress and a prestige system a
 
 ## How to play
 
-Easiest — **double-click `play.bat`.** It starts a tiny local server and opens the game.
-
 > If your browser allows local saves, you can also just **double-click `index.html`.**
 > Some browsers block `localStorage` on `file://` pages, in which case the game still
 > runs but won't auto-save — the game will warn you and you can use **Stats → Export save**.
