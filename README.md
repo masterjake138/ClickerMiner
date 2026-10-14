@@ -1,3 +1,4 @@
+AI DISCLAIMER, i vibe coded this with opencode, it was fun i thought the results i got with open code and the free model 'big pickle'
 # ⛏️ Open Clicker — a cave mining clicker/idler
 
 A browser clicker/idler inspired by *Cookie Clicker*, but you're a cave miner.
